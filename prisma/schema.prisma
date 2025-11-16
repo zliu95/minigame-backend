@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 管理员模型
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // 哈希后的密码
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+// 游戏模型
+model Game {
+  id          String   @id @default(cuid())
+  name        String   // 游戏名称
+  shortName   String   @unique // 英文简称
+  description String?  // 游戏描述
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联的玩家记录
+  players     Player[]
+  
+  @@map("games")
+}
+
+// 玩家模型
+model Player {
+  id          String   @id @default(cuid())
+  gameId      String
+  nickname    String
+  playerId    String   // 平台特定的玩家ID
+  avatarUrl   String?
+  score       Int      @default(0)
+  playTime    Int      @default(0) // 游戏时长（秒）
+  details     Json?    // 详情JSON
+  platform    Platform // 来源平台
+  openId      String?  // 微信/抖音的openId
+  location    Json?    // 地理位置信息
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联的游戏
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  // 复合唯一索引：同一游戏中同一平台的玩家ID唯一
+  @@unique([gameId, platform, playerId])
+  // 性能索引：用于排行榜查询
+  @@index([gameId, score(sort: Desc)])
+  @@index([gameId, platform, score(sort: Desc)])
+  @@index([gameId, createdAt])
+  // 优化索引：用于排名计算和时间范围查询
+  @@index([gameId, score(sort: Desc), updatedAt])
+  @@index([gameId, updatedAt])
+  @@index([score(sort: Desc), updatedAt])
+  @@index([platform, createdAt])
+  @@map("players")
+}
+
+// 平台枚举
+enum Platform {
+  WECHAT      // 微信小程序
+  DOUYIN      // 抖音小程序
+  IOS_APP     // iOS应用
+  ANDROID_APP // Android应用
+}
