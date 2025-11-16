@@ -5,6 +5,7 @@
 ## 目录
 
 - [快速诊断](#快速诊断)
+- [HTTPS 重定向问题](#https-重定向问题)
 - [启动问题](#启动问题)
 - [数据库问题](#数据库问题)
 - [认证问题](#认证问题)
@@ -12,6 +13,74 @@
 - [性能问题](#性能问题)
 - [部署问题](#部署问题)
 - [监控和日志](#监控和日志)
+
+## HTTPS 重定向问题
+
+### 问题：本地开发时强制跳转 HTTPS
+
+**症状：**
+- 访问 `http://localhost:3000` 时自动跳转到 `https://localhost:3000`
+- 浏览器显示 "This site can't provide a secure connection"
+- 线上显示 301 timeout 错误
+
+**原因：**
+`next.config.ts` 中配置了强制 HTTPS 重定向
+
+**解决方案：**
+
+1. **已修复**：最新版本已经注释掉了强制 HTTPS 重定向
+2. **清除浏览器缓存**：301 重定向会被浏览器缓存
+   ```bash
+   # Chrome: 打开开发者工具 > Network > 勾选 "Disable cache"
+   # 或者使用隐私模式/无痕模式测试
+   ```
+
+3. **确认环境变量**：
+   ```bash
+   # 检查 .env.local 或 .env
+   FORCE_HTTPS=false  # 确保设置为 false 或不设置
+   NODE_ENV=development  # 开发环境
+   ```
+
+4. **重启开发服务器**：
+   ```bash
+   # 停止当前服务器
+   # 重新启动
+   npm run dev
+   ```
+
+5. **如果问题持续**：
+   - 清除浏览器所有缓存和 Cookie
+   - 尝试使用不同的浏览器
+   - 检查 `next.config.ts` 中的 `redirects()` 函数是否返回空数组
+
+### 问题：生产环境 HTTPS 配置
+
+**推荐方案：**
+在 Nginx/负载均衡器层面处理 HTTPS，而不是在应用层
+
+**Nginx 配置示例：**
+```nginx
+# 参考 nginx/nginx.conf
+server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+    
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
 
 ## 快速诊断
 

@@ -23,19 +23,20 @@ const nextConfig: NextConfig = {
   // 重定向配置
   async redirects() {
     return [
-      // 强制HTTPS重定向（生产环境）
-      ...(process.env.NODE_ENV === 'production' ? [{
-        source: '/(.*)',
-        has: [
-          {
-            type: 'header' as const,
-            key: 'x-forwarded-proto',
-            value: 'http',
-          },
-        ],
-        destination: 'https://your-domain.com/$1',
-        permanent: true,
-      }] : []),
+      // 注意：HTTPS 重定向应该在 Nginx/负载均衡器层面处理
+      // 如果需要在应用层强制 HTTPS，请取消下面的注释并配置正确的域名
+      // ...(process.env.NODE_ENV === 'production' && process.env.FORCE_HTTPS === 'true' ? [{
+      //   source: '/(.*)',
+      //   has: [
+      //     {
+      //       type: 'header' as const,
+      //       key: 'x-forwarded-proto',
+      //       value: 'http',
+      //     },
+      //   ],
+      //   destination: 'https://your-actual-domain.com/$1',
+      //   permanent: true,
+      // }] : []),
     ];
   },
   
