@@ -8,7 +8,7 @@ import { Platform } from '@prisma/client'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const gameId = searchParams.get('gameId')
+    const gameId = searchParams.get('gameId') || undefined
     const days = parseInt(searchParams.get('days') || '30')
     
     // 生成缓存键

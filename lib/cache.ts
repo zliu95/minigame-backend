@@ -5,7 +5,7 @@ import { Platform } from '@prisma/client';
 let redis: Redis | null = null;
 
 // Initialize Redis connection
-function getRedisClient(): Redis | null {
+export function getRedisClient(): Redis | null {
   if (!process.env.REDIS_URL) {
     console.warn('REDIS_URL not configured, caching disabled');
     return null;
@@ -14,9 +14,12 @@ function getRedisClient(): Redis | null {
   if (!redis) {
     try {
       redis = new Redis(process.env.REDIS_URL, {
-        retryDelayOnFailover: 100,
         maxRetriesPerRequest: 3,
         lazyConnect: true,
+        retryStrategy(times) {
+          const delay = Math.min(times * 50, 2000);
+          return delay;
+        },
       });
 
       redis.on('error', (error) => {

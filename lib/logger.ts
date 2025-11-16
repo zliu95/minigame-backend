@@ -53,7 +53,7 @@ class Logger {
     // 从请求中提取信息
     if (request) {
       entry.requestId = request.headers.get('x-request-id') || undefined;
-      entry.ip = request.ip || request.headers.get('x-forwarded-for') || undefined;
+      entry.ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
       entry.userAgent = request.headers.get('user-agent') || undefined;
       
       // 尝试从认证头或会话中获取用户ID

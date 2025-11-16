@@ -7,9 +7,9 @@ import { withErrorHandling, createSuccessResponse, UnauthorizedError, NotFoundEr
 import { logger } from '@/lib/logger';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // GET /api/games/[id] - 获取单个游戏详情
@@ -20,11 +20,11 @@ export const GET = withErrorHandling(async (request: NextRequest, { params }: Ro
     throw new UnauthorizedError('未授权访问');
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   logger.info('Fetching game details', {
     gameId: id,
-    userId: session.user?.email,
+    userId: session.user?.username,
   }, request);
 
   // 查找游戏
@@ -75,7 +75,7 @@ export const PUT = withErrorHandling(async (request: NextRequest, { params }: Ro
     throw new UnauthorizedError('未授权访问');
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   // 解析请求体
   const body = await request.json();
@@ -86,7 +86,7 @@ export const PUT = withErrorHandling(async (request: NextRequest, { params }: Ro
   logger.info('Updating game', {
     gameId: id,
     updateData: validatedData,
-    userId: session.user?.email,
+    userId: session.user?.username,
   }, request);
 
   // 检查游戏是否存在
@@ -136,11 +136,11 @@ export const DELETE = withErrorHandling(async (request: NextRequest, { params }:
     throw new UnauthorizedError('未授权访问');
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   logger.info('Attempting to delete game', {
     gameId: id,
-    userId: session.user?.email,
+    userId: session.user?.username,
   }, request);
 
   // 检查游戏是否存在

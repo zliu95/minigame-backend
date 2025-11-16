@@ -12,7 +12,7 @@ const ErrorReportSchema = z.object({
   userAgent: z.string().optional(),
   url: z.string().optional(),
   userId: z.string().optional(),
-  additionalInfo: z.record(z.any()).optional(),
+  additionalInfo: z.record(z.string(), z.any()).optional(),
 });
 
 export const POST = withErrorHandling(async (request: NextRequest) => {

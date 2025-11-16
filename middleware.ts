@@ -41,7 +41,7 @@ export default withAuth(
       const suspiciousCheck = detectSuspiciousRequest(req);
       if (suspiciousCheck.suspicious) {
         console.warn(`可疑请求检测到: ${pathname}`, {
-          ip: req.ip,
+          ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown',
           userAgent: req.headers.get('user-agent'),
           reasons: suspiciousCheck.reasons,
         });

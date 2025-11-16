@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { redis } from '@/lib/cache';
+import { getRedisClient } from '@/lib/cache';
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,8 +27,13 @@ export async function GET(request: NextRequest) {
 
     // Check Redis connection
     try {
-      await redis.ping();
-      healthCheck.checks.redis = 'healthy';
+      const redis = getRedisClient();
+      if (redis) {
+        await redis.ping();
+        healthCheck.checks.redis = 'healthy';
+      } else {
+        healthCheck.checks.redis = 'not_configured';
+      }
     } catch (error) {
       healthCheck.checks.redis = 'unhealthy';
       healthCheck.status = 'degraded';

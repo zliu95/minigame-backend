@@ -140,7 +140,8 @@ export function validateAndSanitize<T>(
     return { success: true, data: result };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const firstError = error.errors[0];
+      const issues = error.issues;
+      const firstError = issues[0];
       return { 
         success: false, 
         error: firstError?.message || '数据验证失败' 

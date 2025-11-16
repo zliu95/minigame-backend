@@ -26,7 +26,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     limit,
     search,
     isActive,
-    userId: session.user?.email,
+    userId: session.user?.username,
   }, request);
 
   // 构建查询条件
@@ -95,7 +95,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   logger.info('Creating new game', {
     gameName: validatedData.name,
     shortName: validatedData.shortName,
-    userId: session.user?.email,
+    userId: session.user?.username,
   }, request);
 
   // 创建游戏

@@ -22,10 +22,10 @@ const LeaderboardQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
-    const { gameId } = params;
+    const { gameId } = await params;
     const { searchParams } = new URL(request.url);
     
     // 验证查询参数
