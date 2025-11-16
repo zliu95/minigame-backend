@@ -22,7 +22,8 @@
     "start:production": "NODE_ENV=production npm run start",
     "deploy:check": "npm run type-check && npm run lint && npm run build:production",
     "validate:env": "node scripts/validate-env.js",
-    "validate:env:template": "node scripts/validate-env.js template"
+    "validate:env:template": "node scripts/validate-env.js template",
+    "test:local": "./scripts/test-local.sh"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
