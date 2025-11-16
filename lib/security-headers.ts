@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
 /**
- * 安全响应头配置
+ * 安全响应头配置（基础头部）
  */
-export const SECURITY_HEADERS = {
+const BASE_SECURITY_HEADERS = {
   // 内容安全策略
   'Content-Security-Policy': [
     "default-src 'self'",
@@ -38,14 +38,31 @@ export const SECURITY_HEADERS = {
     'usb=()',
   ].join(', '),
   
-  // 严格传输安全（仅HTTPS）
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-  
   // 防止缓存敏感信息
   'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
   'Pragma': 'no-cache',
   'Expires': '0',
 };
+
+/**
+ * HSTS 头部（仅在生产环境且使用 HTTPS 时设置）
+ */
+const HSTS_HEADER = {
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+};
+
+/**
+ * 获取完整的安全头部（根据环境动态决定是否包含 HSTS）
+ */
+export const SECURITY_HEADERS = (() => {
+  // 只在生产环境且明确启用 HTTPS 时才添加 HSTS
+  const shouldUseHSTS = process.env.NODE_ENV === 'production' && 
+                        process.env.FORCE_HTTPS === 'true';
+  
+  return shouldUseHSTS 
+    ? { ...BASE_SECURITY_HEADERS, ...HSTS_HEADER }
+    : BASE_SECURITY_HEADERS;
+})();
 
 /**
  * CORS配置
@@ -155,9 +172,15 @@ export function isSecureConnection(request: Request): boolean {
 
 /**
  * 强制HTTPS重定向
+ * 注意：推荐在 Nginx/负载均衡器层面处理 HTTPS 重定向
+ * 只有在明确设置 FORCE_HTTPS=true 时才在应用层强制重定向
  */
 export function enforceHttps(request: Request): NextResponse | null {
-  if (process.env.NODE_ENV === 'production' && !isSecureConnection(request)) {
+  // 只有在明确启用时才强制 HTTPS
+  const shouldForceHttps = process.env.NODE_ENV === 'production' && 
+                           process.env.FORCE_HTTPS === 'true';
+  
+  if (shouldForceHttps && !isSecureConnection(request)) {
     const url = new URL(request.url);
     url.protocol = 'https:';
     
