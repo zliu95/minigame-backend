@@ -24,12 +24,19 @@
 ## 📋 系统要求
 
 - Node.js 18.0.0+
+- PostgreSQL 14+ (或使用 Supabase/Neon)
 - PostgreSQL 13.0+
 - Redis 6.0+
 - 2GB+ RAM (推荐 8GB)
 - 10GB+ 存储空间
 
 ## 🚀 快速开始
+
+### 数据库设置
+
+**推荐使用云数据库（5 分钟设置）：**
+- 📘 [Supabase/Neon 快速配置](./SUPABASE_NEON_QUICKSTART.md) - 最快的方式
+- 📗 [详细数据库设置指南](./DATABASE_SETUP.md) - 包含本地 PostgreSQL
 
 ### 1. 克隆项目
 

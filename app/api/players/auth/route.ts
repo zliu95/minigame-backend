@@ -210,7 +210,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
       nickname: player.nickname,
       avatarUrl: player.avatarUrl,
       score: player.score,
-      playTime: player.playTime,
+      duration: player.duration,
       platform: player.platform,
     },
   }, 200, request);

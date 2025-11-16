@@ -11,8 +11,8 @@ interface Player {
   playerId: string;
   avatarUrl?: string;
   score: number;
-  playTime: number;
-  details?: any;
+  duration: number;
+  detailsJson?: any;
   platform: 'WECHAT' | 'DOUYIN' | 'IOS_APP' | 'ANDROID_APP';
   location?: {
     country?: string;
@@ -116,7 +116,7 @@ export function LeaderboardTable({ gameId, gameName }: LeaderboardTableProps) {
     setShowPlayerModal(true);
   };
 
-  const formatPlayTime = (seconds: number) => {
+  const formatduration = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
@@ -269,7 +269,7 @@ export function LeaderboardTable({ gameId, gameName }: LeaderboardTableProps) {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      {formatPlayTime(ranking.player.playTime)}
+                      {formatduration(ranking.player.duration)}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -362,7 +362,7 @@ export function LeaderboardTable({ gameId, gameName }: LeaderboardTableProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">游戏时长</label>
-                <p className="text-sm">{formatPlayTime(selectedPlayer.playTime)}</p>
+                <p className="text-sm">{formatduration(selectedPlayer.duration)}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">来源平台</label>
@@ -386,11 +386,11 @@ export function LeaderboardTable({ gameId, gameName }: LeaderboardTableProps) {
               </div>
             </div>
             
-            {selectedPlayer.details && (
+            {selectedPlayer.detailsJson && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">详情信息</label>
                 <pre className="bg-gray-100 p-3 rounded text-xs overflow-auto max-h-40">
-                  {JSON.stringify(selectedPlayer.details, null, 2)}
+                  {JSON.stringify(selectedPlayer.detailsJson, null, 2)}
                 </pre>
               </div>
             )}

@@ -60,8 +60,8 @@ export class QueryOptimizer {
     if (offset > 1000) {
       return await prisma.$queryRaw`
         SELECT 
-          id, nickname, "playerId", "avatarUrl", score, "playTime", 
-          details, platform, location, "createdAt", "updatedAt",
+          id, nickname, "playerId", "avatarUrl", score, "duration", 
+          detailsJson, platform, location, "createdAt", "updatedAt",
           ROW_NUMBER() OVER (ORDER BY score DESC, "updatedAt" ASC) as rank
         FROM players 
         WHERE "gameId" = ${gameId}
@@ -86,8 +86,8 @@ export class QueryOptimizer {
         playerId: true,
         avatarUrl: true,
         score: true,
-        playTime: true,
-        details: true,
+        duration: true,
+        detailsJson: true,
         platform: true,
         location: true,
         createdAt: true,

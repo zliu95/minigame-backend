@@ -44,49 +44,56 @@ async function main() {
   console.log('创建示例游戏:', { game1, game2 })
 
   // 创建示例玩家数据
+  console.log('创建示例玩家数据...')
+  
   const samplePlayers = [
     {
       gameId: game1.id,
+      openid: 'wx_openid_001',
       nickname: '玩家小明',
-      playerId: 'wx_player_001',
-      avatarUrl: 'https://example.com/avatar1.jpg',
-      score: 1500,
-      playTime: 3600,
+      avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming',
+      score: 1500.5,
+      duration: 3600,
       platform: 'WECHAT' as const,
-      openId: 'wx_openid_001',
-      location: {
-        country: '中国',
-        province: '北京市',
-        city: '北京市',
+      location: '中国-北京市-北京市',
+      detailsJson: {
+        items_used: { hint: 3, skip: 1, boost: 2 },
+        level_completed: 15,
+        achievements: ['first_win', 'speed_master'],
+        combo_max: 50,
       },
     },
     {
       gameId: game1.id,
+      openid: 'dy_openid_001',
       nickname: '玩家小红',
-      playerId: 'dy_player_001',
-      avatarUrl: 'https://example.com/avatar2.jpg',
-      score: 1200,
-      playTime: 2400,
+      avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaohong',
+      score: 1200.0,
+      duration: 2400,
       platform: 'DOUYIN' as const,
-      openId: 'dy_openid_001',
-      location: {
-        country: '中国',
-        province: '上海市',
-        city: '上海市',
+      location: '中国-上海市-上海市',
+      detailsJson: {
+        items_used: { hint: 5, skip: 0, boost: 1 },
+        level_completed: 12,
+        achievements: ['first_win'],
+        combo_max: 35,
       },
     },
     {
       gameId: game2.id,
+      openid: 'ios_openid_001',
       nickname: 'iOS玩家',
-      playerId: 'ios_player_001',
-      avatarUrl: 'https://example.com/avatar3.jpg',
-      score: 2000,
-      playTime: 4800,
+      avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=iosplayer',
+      score: 2000.8,
+      duration: 4800,
       platform: 'IOS_APP' as const,
-      location: {
-        country: '中国',
-        province: '广东省',
-        city: '深圳市',
+      location: '中国-广东省-深圳市',
+      detailsJson: {
+        items_used: { hint: 2, skip: 2, boost: 3 },
+        level_completed: 20,
+        achievements: ['first_win', 'speed_master', 'perfect_score'],
+        combo_max: 80,
+        accuracy: 0.95,
       },
     },
   ]
@@ -94,16 +101,23 @@ async function main() {
   for (const playerData of samplePlayers) {
     const player = await prisma.player.upsert({
       where: {
-        gameId_platform_playerId: {
+        gameId_openid_platform: {
           gameId: playerData.gameId,
+          openid: playerData.openid,
           platform: playerData.platform,
-          playerId: playerData.playerId,
         },
       },
-      update: {},
+      update: {
+        nickname: playerData.nickname,
+        avatarUrl: playerData.avatarUrl,
+        score: playerData.score,
+        duration: playerData.duration,
+        location: playerData.location,
+        detailsJson: playerData.detailsJson,
+      },
       create: playerData,
     })
-    console.log('创建示例玩家:', player.nickname)
+    console.log(`✓ 创建玩家: ${player.nickname} (${player.platform}) - 分数: ${player.score}`)
   }
 
   console.log('种子数据创建完成!')

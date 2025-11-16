@@ -227,8 +227,8 @@ export class QueryOptimizationHelpers {
     nickname: string;
     avatarUrl?: string;
     score?: number;
-    playTime?: number;
-    details?: any;
+    duration?: number;
+    detailsJson?: any;
     location?: any;
   }>) {
     const queries = players.map(player => 
@@ -244,8 +244,8 @@ export class QueryOptimizationHelpers {
           nickname: player.nickname,
           avatarUrl: player.avatarUrl,
           score: player.score || 0,
-          playTime: player.playTime || 0,
-          details: player.details,
+          duration: player.duration || 0,
+          detailsJson: player.detailsJson,
           location: player.location,
           updatedAt: new Date(),
         },
@@ -256,8 +256,8 @@ export class QueryOptimizationHelpers {
           nickname: player.nickname,
           avatarUrl: player.avatarUrl,
           score: player.score || 0,
-          playTime: player.playTime || 0,
-          details: player.details,
+          duration: player.duration || 0,
+          detailsJson: player.detailsJson,
           location: player.location,
         }
       })
@@ -297,7 +297,7 @@ export class QueryOptimizationHelpers {
           playerId: true,
           avatarUrl: true,
           score: true,
-          playTime: true,
+          duration: true,
           platform: true,
           updatedAt: true,
         }
@@ -318,7 +318,7 @@ export class QueryOptimizationHelpers {
           playerId: true,
           avatarUrl: true,
           score: true,
-          playTime: true,
+          duration: true,
           platform: true,
           updatedAt: true,
         }

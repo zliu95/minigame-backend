@@ -19,7 +19,7 @@ export function formatScore(score: number): string {
   return score.toLocaleString('zh-CN');
 }
 
-export function formatPlayTime(seconds: number): string {
+export function formatduration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;

@@ -63,11 +63,11 @@ export const UpdateScoreSchema = z.object({
     .int({ message: '分值必须是整数' })
     .min(0, '分值不能为负数')
     .max(999999999, '分值过大'), // 限制最大分值
-  playTime: z.number()
+  duration: z.number()
     .int({ message: '游戏时长必须是整数' })
     .min(0, '游戏时长不能为负数')
     .max(86400 * 365, '游戏时长不能超过一年'), // 限制最大游戏时长
-  details: z.record(z.string(), z.any())
+  detailsJson: z.record(z.string(), z.any())
     .refine(
       (obj) => {
         const str = JSON.stringify(obj);

@@ -31,8 +31,8 @@ export interface Player {
   playerId: string;
   avatarUrl?: string;
   score: number;
-  playTime: number;
-  details?: Record<string, unknown>;
+  duration: number;
+  detailsJson?: Record<string, unknown>;
   platform: Platform;
   openId?: string;
   location?: {

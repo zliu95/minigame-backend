@@ -37,36 +37,37 @@ model Game {
   @@map("games")
 }
 
-// 玩家模型
+// 玩家模型（包含玩家信息和排行榜数据）
 model Player {
   id          String   @id @default(cuid())
-  gameId      String
-  nickname    String
+  gameId      String   // 游戏ID
+  openid      String   // 平台的唯一标识（微信openid、抖音openid等）
+  nickname    String   // 昵称
   playerId    String   // 平台特定的玩家ID
-  avatarUrl   String?
-  score       Int      @default(0)
-  playTime    Int      @default(0) // 游戏时长（秒）
-  details     Json?    // 详情JSON
+  avatarUrl   String?  // 头像URL
+  score       Float    @default(0) // 分数（支持小数）
+  duration    Int      @default(0) // 游戏时长（秒）
+  detailsJson Json?    // 详细数据（道具使用、关卡信息等）
   platform    Platform // 来源平台
-  openId      String?  // 微信/抖音的openId
-  location    Json?    // 地理位置信息
+  location    String?  // 地理位置（格式：国家-省份-城市）
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   // 关联的游戏
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   
-  // 复合唯一索引：同一游戏中同一平台的玩家ID唯一
-  @@unique([gameId, platform, playerId])
+  // 复合唯一索引：同一游戏中同一平台的同一玩家只有一条记录
+  @@unique([gameId, openid, platform])
+  
   // 性能索引：用于排行榜查询
-  @@index([gameId, score(sort: Desc)])
-  @@index([gameId, platform, score(sort: Desc)])
-  @@index([gameId, createdAt])
-  // 优化索引：用于排名计算和时间范围查询
-  @@index([gameId, score(sort: Desc), updatedAt])
-  @@index([gameId, updatedAt])
-  @@index([score(sort: Desc), updatedAt])
-  @@index([platform, createdAt])
+  @@index([gameId, score(sort: Desc)])           // 游戏总排行榜
+  @@index([gameId, platform, score(sort: Desc)]) // 按平台的排行榜
+  @@index([gameId, duration(sort: Asc)])         // 按时长排序
+  @@index([gameId, createdAt])                   // 按创建时间
+  @@index([gameId, updatedAt])                   // 按更新时间
+  @@index([gameId, score(sort: Desc), updatedAt]) // 排行榜（带时间）
+  @@index([platform, createdAt])                 // 按平台和时间
+  
   @@map("players")
 }
 

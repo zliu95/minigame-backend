@@ -20,7 +20,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   
   logger.info('Score update request', {
     score: validatedData.score,
-    playTime: validatedData.playTime,
+    duration: validatedData.duration,
     hasDetails: !!validatedData.details,
   }, request);
 
@@ -76,8 +76,8 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
       where: { id: player.id },
       data: {
         score: validatedData.score,
-        playTime: validatedData.playTime,
-        details: validatedData.details,
+        duration: validatedData.duration,
+        detailsJson: validatedData.detailsJson,
         updatedAt: new Date(),
       },
     }),
@@ -129,7 +129,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
         nickname: true,
         avatarUrl: true,
         score: true,
-        playTime: true,
+        duration: true,
         platform: true,
       },
     }),
@@ -166,7 +166,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
       nickname: updatedPlayer.nickname,
       avatarUrl: updatedPlayer.avatarUrl,
       score: updatedPlayer.score,
-      playTime: updatedPlayer.playTime,
+      duration: updatedPlayer.duration,
       platform: updatedPlayer.platform,
     },
     nearbyRankings,

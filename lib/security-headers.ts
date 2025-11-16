@@ -70,7 +70,7 @@ export const SECURITY_HEADERS = (() => {
 export const CORS_CONFIG = {
   // 允许的来源
   allowedOrigins: [
-    process.env.NEXTAUTH_URL || 'http://localhost:3000',
+    process.env.NEXTAUTH_URL || 'http://localhost:3000','http://localhost:7456',
     'https://your-production-domain.com', // 替换为实际的生产域名
   ],
   

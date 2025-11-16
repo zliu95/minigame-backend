@@ -33,7 +33,7 @@ CREATE TABLE "players" (
     "playerId" TEXT NOT NULL,
     "avatarUrl" TEXT,
     "score" INTEGER NOT NULL DEFAULT 0,
-    "playTime" INTEGER NOT NULL DEFAULT 0,
+    "duration" INTEGER NOT NULL DEFAULT 0,
     "details" JSONB,
     "platform" "Platform" NOT NULL,
     "openId" TEXT,
