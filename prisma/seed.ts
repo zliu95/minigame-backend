@@ -115,7 +115,18 @@ async function main() {
         location: playerData.location,
         detailsJson: playerData.detailsJson,
       },
-      create: playerData,
+      create: {
+          gameId: playerData.gameId,
+          playerId: playerData.openid,
+          openid: playerData.openid,
+          platform: playerData.platform as any,
+          nickname: playerData.nickname,
+          avatarUrl: playerData.avatarUrl,
+          score: playerData.score || 0,
+          duration: playerData.duration || 0,
+          detailsJson: playerData.detailsJson,
+          location: playerData.location,
+        }
     })
     console.log(`✓ 创建玩家: ${player.nickname} (${player.platform}) - 分数: ${player.score}`)
   }

@@ -95,6 +95,13 @@ export async function GET(
       );
     }
 
-    return handleApiError(error, request);
+    const apiError = handleApiError(error, request);
+    return NextResponse.json(
+      {
+        success: false,
+        error: apiError,
+      },
+      { status: 500 }
+    );
   }
 }

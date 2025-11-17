@@ -371,10 +371,19 @@ export class GameCenterService {
    */
   async verifyPlayer(
     playerId: string,
-    publicKeyUrl?: string,
-    signature?: string,
-    salt?: string,
-    timestamp?: number
+    userInfo?: {
+      nickname?: string;
+      avatarUrl?: string;
+      publicKeyUrl?: string;
+      signature?: string;
+      salt?: string;
+      timestamp?: number;
+      location?: {
+        country?: string;
+        province?: string;
+        city?: string;
+      };
+    }
   ): Promise<ExternalPlayerInfo> {
     try {
       // 基础验证：检查playerId格式
@@ -391,12 +400,12 @@ export class GameCenterService {
       // 3. 验证时间戳
       // 4. 调用Apple的验证服务
 
-      // 目前返回基础的玩家信息
+      // 返回玩家信息，优先使用传入的信息
       return {
         playerId,
-        nickname: `iOS玩家_${playerId.slice(-6)}`, // 使用playerId后6位作为默认昵称
-        avatarUrl: undefined, // Game Center不提供头像URL
-        location: undefined, // Game Center不提供位置信息
+        nickname: userInfo?.nickname || `iOS玩家_${playerId.slice(-6)}`, // 优先使用传入的昵称
+        avatarUrl: userInfo?.avatarUrl, // 使用传入的头像URL
+        location: userInfo?.location, // 使用传入的位置信息
       };
     } catch (error) {
       if (error instanceof ExternalApiError) {
@@ -476,13 +485,7 @@ export class ExternalApiFactory {
         if (!playerId) {
           throw new ExternalApiError('Game Center player ID is required', platform);
         }
-        return this.getGameCenterService().verifyPlayer(
-          playerId,
-          userInfo?.publicKeyUrl,
-          userInfo?.signature,
-          userInfo?.salt,
-          userInfo?.timestamp
-        );
+        return this.getGameCenterService().verifyPlayer(playerId, userInfo);
 
       case Platform.ANDROID_APP:
         // Android应用可以直接使用提供的playerId

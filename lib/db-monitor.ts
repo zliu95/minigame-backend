@@ -234,10 +234,10 @@ export class QueryOptimizationHelpers {
     const queries = players.map(player => 
       prisma.player.upsert({
         where: {
-          gameId_platform_playerId: {
+          gameId_openid_platform: {
             gameId: player.gameId,
+            openid: player.playerId,
             platform: player.platform as any,
-            playerId: player.playerId,
           }
         },
         update: {
@@ -252,6 +252,7 @@ export class QueryOptimizationHelpers {
         create: {
           gameId: player.gameId,
           playerId: player.playerId,
+          openid: player.playerId,
           platform: player.platform as any,
           nickname: player.nickname,
           avatarUrl: player.avatarUrl,
