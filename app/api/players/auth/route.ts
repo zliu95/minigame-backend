@@ -122,13 +122,11 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
 
   // 查找或创建玩家记录
   const existingPlayer = await withLogging(
-    () => prisma.player.findUnique({
+    () => prisma.player.findFirst({
       where: {
-        gameId_openid_platform: {
-          gameId: validatedData.gameId,
-          openid: externalPlayerInfo.playerId,
-          platform: validatedData.platform as Platform,
-        },
+        gameId: validatedData.gameId,
+        openid: externalPlayerInfo.playerId,
+        platform: validatedData.platform as Platform,
       },
     }),
     'find existing player',
