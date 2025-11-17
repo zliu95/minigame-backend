@@ -124,10 +124,10 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   const existingPlayer = await withLogging(
     () => prisma.player.findUnique({
       where: {
-        gameId_platform_playerId: {
+        gameId_openid_platform: {
           gameId: validatedData.gameId,
+          openid: externalPlayerInfo.playerId,
           platform: validatedData.platform as Platform,
-          playerId: externalPlayerInfo.playerId,
         },
       },
     }),
@@ -144,10 +144,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
         data: {
           nickname: sanitizeInput(externalPlayerInfo.nickname),
           avatarUrl: externalPlayerInfo.avatarUrl,
-          location: externalPlayerInfo.location,
-          openId: validatedData.platform === Platform.WECHAT || validatedData.platform === Platform.DOUYIN 
-            ? externalPlayerInfo.playerId 
-            : existingPlayer.openId,
+          location: externalPlayerInfo.location ? JSON.stringify(externalPlayerInfo.location) : null,
           updatedAt: new Date(),
         },
       }),
@@ -170,10 +167,8 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
           playerId: externalPlayerInfo.playerId,
           avatarUrl: externalPlayerInfo.avatarUrl,
           platform: validatedData.platform as Platform,
-          openId: validatedData.platform === Platform.WECHAT || validatedData.platform === Platform.DOUYIN 
-            ? externalPlayerInfo.playerId 
-            : null,
-          location: externalPlayerInfo.location,
+          openid: externalPlayerInfo.playerId,
+          location: externalPlayerInfo.location ? JSON.stringify(externalPlayerInfo.location) : null,
         },
       }),
       'create new player',
