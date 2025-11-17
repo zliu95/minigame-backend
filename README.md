@@ -140,6 +140,7 @@ docker-compose -f docker-compose.production.yml exec app npm run db:migrate:prod
 ### 排行榜 API
 
 - `GET /api/leaderboards/[gameId]` - 获取排行榜
+- `GET /api/leaderboards/[gameId]/rank?score={score}` - 查询分数排名
 - `POST /api/players/score` - 更新玩家分数
 
 ### 分析 API

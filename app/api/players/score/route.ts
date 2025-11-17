@@ -21,7 +21,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   logger.info('Score update request', {
     score: validatedData.score,
     duration: validatedData.duration,
-    hasDetails: !!validatedData.details,
+    hasDetails: !!validatedData.detailsJson,
   }, request);
 
   // 验证token

@@ -80,6 +80,7 @@ export function detectSuspiciousRequest(request: NextRequest): {
   const reasons: string[] = [];
   const userAgent = request.headers.get('user-agent') || '';
   const contentLength = request.headers.get('content-length');
+  const isDevelopment = process.env.NODE_ENV === 'development';
   
   // 检查异常大的请求体
   if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) { // 10MB
@@ -102,18 +103,21 @@ export function detectSuspiciousRequest(request: NextRequest): {
     reasons.push('可疑的User-Agent');
   }
   
-  // 检查异常的请求头
-  const suspiciousHeaders = [
-    'x-forwarded-host',
-    'x-cluster-client-ip',
-    'x-real-ip',
-  ];
-  
-  for (const header of suspiciousHeaders) {
-    if (request.headers.get(header)) {
-      const value = request.headers.get(header);
-      if (value && !isValidIP(value)) {
-        reasons.push(`异常的${header}头`);
+  // 在生产环境中检查异常的请求头
+  // 开发环境跳过这些检查，因为本地代理可能会添加这些头
+  if (!isDevelopment) {
+    const suspiciousHeaders = [
+      'x-forwarded-host',
+      'x-cluster-client-ip',
+      'x-real-ip',
+    ];
+    
+    for (const header of suspiciousHeaders) {
+      if (request.headers.get(header)) {
+        const value = request.headers.get(header);
+        if (value && !isValidIP(value) && !isValidHost(value)) {
+          reasons.push(`异常的${header}头`);
+        }
       }
     }
   }
@@ -128,8 +132,13 @@ export function detectSuspiciousRequest(request: NextRequest): {
  * 验证IP地址格式
  */
 function isValidIP(ip: string): boolean {
+  // IPv6 本地地址
+  if (ip === '::1' || ip === '::ffff:127.0.0.1') {
+    return true;
+  }
+  
   const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
-  const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+  const ipv6Regex = /^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$/;
   
   if (ipv4Regex.test(ip)) {
     return ip.split('.').every(octet => {
@@ -139,6 +148,23 @@ function isValidIP(ip: string): boolean {
   }
   
   return ipv6Regex.test(ip);
+}
+
+/**
+ * 验证主机名格式（包括 localhost 和域名）
+ */
+function isValidHost(host: string): boolean {
+  // 移除端口号
+  const hostWithoutPort = host.split(':')[0];
+  
+  // 检查是否是 localhost
+  if (hostWithoutPort === 'localhost' || hostWithoutPort === '127.0.0.1') {
+    return true;
+  }
+  
+  // 检查是否是有效的域名
+  const domainRegex = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+  return domainRegex.test(hostWithoutPort);
 }
 
 /**
