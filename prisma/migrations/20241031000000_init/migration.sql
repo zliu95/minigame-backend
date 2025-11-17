@@ -36,7 +36,7 @@ CREATE TABLE "players" (
     "duration" INTEGER NOT NULL DEFAULT 0,
     "details" JSONB,
     "platform" "Platform" NOT NULL,
-    "openId" TEXT,
+    "openid" TEXT,
     "location" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

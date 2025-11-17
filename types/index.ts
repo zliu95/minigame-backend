@@ -34,7 +34,7 @@ export interface Player {
   duration: number;
   detailsJson?: Record<string, unknown>;
   platform: Platform;
-  openId?: string;
+  openid?: string;
   location?: {
     country?: string;
     province?: string;
